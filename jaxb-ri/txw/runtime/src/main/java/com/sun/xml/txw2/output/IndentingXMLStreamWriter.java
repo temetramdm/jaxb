@@ -57,9 +57,15 @@ public class IndentingXMLStreamWriter extends DelegatingXMLStreamWriter {
 
     private String indentStep = "  ";
     private int depth = 0;
+    private final String lineSeparator;
 
     public IndentingXMLStreamWriter(XMLStreamWriter writer) {
+        this(writer, "\n");
+    }
+
+    public IndentingXMLStreamWriter(XMLStreamWriter writer, String lineSeparator) {
         super(writer);
+        this.lineSeparator = lineSeparator;
     }
 
     /**
@@ -105,7 +111,7 @@ public class IndentingXMLStreamWriter extends DelegatingXMLStreamWriter {
         stateStack.push(SEEN_ELEMENT);
         state = SEEN_NOTHING;
         if (depth > 0) {
-            super.writeCharacters("\n");
+            super.writeCharacters(lineSeparator);
         }
         doIndent();
         depth++;
@@ -114,7 +120,7 @@ public class IndentingXMLStreamWriter extends DelegatingXMLStreamWriter {
     private void onEndElement() throws XMLStreamException {
         depth--;
         if (state == SEEN_ELEMENT) {
-            super.writeCharacters("\n");
+            super.writeCharacters(lineSeparator);
             doIndent();
         }
         state = stateStack.pop();
@@ -123,7 +129,7 @@ public class IndentingXMLStreamWriter extends DelegatingXMLStreamWriter {
     private void onEmptyElement() throws XMLStreamException {
         state = SEEN_ELEMENT;
         if (depth > 0) {
-            super.writeCharacters("\n");
+            super.writeCharacters(lineSeparator);
         }
         doIndent();
     }
@@ -145,17 +151,17 @@ public class IndentingXMLStreamWriter extends DelegatingXMLStreamWriter {
 
     public void writeStartDocument() throws XMLStreamException {
         super.writeStartDocument();
-        super.writeCharacters("\n");
+        super.writeCharacters(lineSeparator);
     }
 
     public void writeStartDocument(String version) throws XMLStreamException {
         super.writeStartDocument(version);
-        super.writeCharacters("\n");
+        super.writeCharacters(lineSeparator);
     }
 
     public void writeStartDocument(String encoding, String version) throws XMLStreamException {
         super.writeStartDocument(encoding, version);
-        super.writeCharacters("\n");
+        super.writeCharacters(lineSeparator);
     }
 
     public void writeStartElement(String localName) throws XMLStreamException {
